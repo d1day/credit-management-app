@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/TImeTable.dart';
+import 'time_table.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TimeTable(title: 'Flutter Demo Home Page'),
+      home: const TimeTable(),
     );
   }
 }
