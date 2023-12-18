@@ -1,5 +1,36 @@
 import 'package:flutter/material.dart';
 
+// 定数
+// 日曜日
+const strSunday = 'Sunday';
+// 月曜日
+const strMonday = 'Monday';
+// 火曜日
+const strTuesday = 'Tuesday';
+// 水曜日
+const strWednesday = 'Wednesday';
+// 木曜日
+const strThursday = 'Thursday';
+// 金曜日
+const strFriday = 'Friday';
+// 土曜日
+const strSaturday = 'Saturday';
+// 曜日
+const lstCdDay = [
+  strSunday,
+  strMonday,
+  strTuesday,
+  strWednesday,
+  strThursday,
+  strFriday,
+  strSaturday
+];
+// 曜日
+const lstDay = ['日', '月', '火', '水', '木', '金', '土'];
+// 学期
+const lstSemestar = ['前期', '後期'];
+
+// 自作Widget
 // コンボボックス
 class CmbBase extends StatefulWidget {
   const CmbBase(

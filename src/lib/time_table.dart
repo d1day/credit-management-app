@@ -5,14 +5,10 @@ import 'base_component.dart';
 const colorBar = Color.fromARGB(255, 122, 204, 241);
 // 枠線の太さ
 const nWidth = 0.5;
-// 学期
-const lstSemestar = ['前期', '後期'];
-// 曜日
-const lstDay = ['日', '月', '火', '水', '木', '金', '土'];
 // 時間数
 int numHour = 6;
 // 曜日
-int numDay = 7;
+int numDay = 6;
 
 class TimeTable extends StatelessWidget {
   const TimeTable({super.key});
@@ -96,19 +92,30 @@ Widget createTimeTableCell(int index) {
             ))));
   } else {
     // 授業
-    return TimeTableCell(strIdLesson: 'a');
+    return TimeTableCell(
+        strIdLesson: 'a',
+        strCdDay: lstCdDay[numDay != 7
+            ? ((index + 1) % (numDay + 1) + numDay) % (numDay + 1)
+            : ((index + 1) % (numDay + 1) + (numDay - 1)) % (numDay + 1)],
+        nHour: (index / (numDay + 1)).floor());
   }
 }
 
 // 授業選択時
-void selectLesson(String strIdLesson) {
+void selectLesson(String strIdLesson, String strCdDay, int nHour) {
   // 授業選択時の処理
 }
 
 // 授業用のセル
 class TimeTableCell extends StatefulWidget {
-  const TimeTableCell({super.key, required this.strIdLesson});
+  const TimeTableCell(
+      {super.key,
+      required this.strIdLesson,
+      required this.strCdDay,
+      required this.nHour});
   final String strIdLesson;
+  final String strCdDay;
+  final int nHour;
 
   @override
   State<TimeTableCell> createState() => _TimeTableCellState();
@@ -119,11 +126,11 @@ class _TimeTableCellState extends State<TimeTableCell> {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          selectLesson(widget.strIdLesson);
+          selectLesson(widget.strIdLesson, widget.strCdDay, widget.nHour);
         },
         child: Container(
           decoration: BoxDecoration(border: Border.all(width: nWidth)),
-          child: const Text('授業'),
+          child: Text(widget.strCdDay + widget.nHour.toString()),
         ));
   }
 }
