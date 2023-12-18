@@ -102,8 +102,45 @@ Widget createTimeTableCell(int index) {
 }
 
 // 授業選択時
-void selectLesson(String strIdLesson, String strCdDay, int nHour) {
-  // 授業選択時の処理
+void selectLesson(
+    BuildContext context, String strIdLesson, String strCdDay, int nHour) {
+  // 画面遷移時の処理
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => Next(
+        strCdDay: strCdDay,
+        nHour: nHour,
+      ),
+    ),
+  );
+}
+
+//授業・単位数登録画面
+class Next extends StatefulWidget {
+  final String strCdDay;
+  final int nHour;
+  @override
+  Next({required this.strCdDay, required this.nHour});
+  _NextState createState() => _NextState();
+}
+
+class _NextState extends State<Next> {
+  @override
+  Widget build(BuildContext context) {
+    String resultText = widget.strCdDay + widget.nHour.toString();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(resultText),
+      ),
+      body: Container(
+        child: Column(children: [
+          TextField(),
+          TextField(),
+        ]),
+      ),
+    );
+  }
 }
 
 // 授業用のセル
@@ -126,11 +163,12 @@ class _TimeTableCellState extends State<TimeTableCell> {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          selectLesson(widget.strIdLesson, widget.strCdDay, widget.nHour);
+          selectLesson(
+              context, widget.strIdLesson, widget.strCdDay, widget.nHour);
         },
         child: Container(
           decoration: BoxDecoration(border: Border.all(width: nWidth)),
-          child: Text(widget.strCdDay + widget.nHour.toString()),
+          // child: Text(widget.strCdDay + widget.nHour.toString()),
         ));
   }
 }
