@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
+import 'package:sqflite/sqflite.dart';
 
 // バーの色
 const colorBar = Color.fromARGB(255, 122, 204, 241);
