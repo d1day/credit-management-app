@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
-import 'package:sqflite/sqflite.dart';
 
 // バーの色
 const colorBar = Color.fromARGB(255, 122, 204, 241);
@@ -95,7 +94,7 @@ Widget createTimeTableCell(int index) {
     // 授業
     return TimeTableCell(
         strIdLesson: 'a',
-        strCdDay: lstCdDay[numDay != 7
+        strCdDay: lstDay[numDay != 7
             ? ((index + 1) % (numDay + 1) + numDay) % (numDay + 1)
             : ((index + 1) % (numDay + 1) + (numDay - 1)) % (numDay + 1)],
         nHour: (index / (numDay + 1)).floor());

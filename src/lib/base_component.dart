@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 
 // 定数
 // 日曜日
-const strSunday = 'Sunday';
+const strSunday = '日';
 // 月曜日
-const strMonday = 'Monday';
+const strMonday = '月';
 // 火曜日
-const strTuesday = 'Tuesday';
+const strTuesday = '火';
 // 水曜日
-const strWednesday = 'Wednesday';
+const strWednesday = '水';
 // 木曜日
-const strThursday = 'Thursday';
+const strThursday = '木';
 // 金曜日
-const strFriday = 'Friday';
+const strFriday = '金';
 // 土曜日
-const strSaturday = 'Saturday';
+const strSaturday = '土';
 // 曜日
-const lstCdDay = [
+const lstDay = [
   strSunday,
   strMonday,
   strTuesday,
@@ -25,8 +25,6 @@ const lstCdDay = [
   strFriday,
   strSaturday
 ];
-// 曜日
-const lstDay = ['日', '月', '火', '水', '木', '金', '土'];
 // 学期
 const lstSemestar = ['前期', '後期'];
 
