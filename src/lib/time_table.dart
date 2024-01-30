@@ -4,6 +4,8 @@ import 'base_component.dart';
 // デザイン
 // バーの色
 const colorBar = Color.fromARGB(255, 169, 210, 243);
+// ボトムバーの高さ
+const double nBnbHeight = 60;
 // 枠線の太さ
 const double nWidth = 0.5;
 // 時間の列の幅
@@ -47,14 +49,15 @@ class TimeTable extends StatelessWidget {
       lstYear.add((nYear + i).toString());
     }
 
-    final nAppBarHeight = AppBar().preferredSize.height;
+    final clrAppBarHeight = AppBar().preferredSize.height;
     nWidthHour = nDeviceWidth / 14;
     nHeightDay = nDeviceHeight / 20;
     nWidthCell = (nDeviceWidth - nWidthHour - (nSideSpace * 2)) / numDay;
     nHeightCell = (nDeviceHeight -
-                nAppBarHeight -
+                clrAppBarHeight -
                 nHeightDay -
-                (nTopAndBottomSpace * 2)) /
+                (nTopAndBottomSpace * 2) -
+                nBnbHeight) /
             numHour -
         5;
 
@@ -92,7 +95,17 @@ class TimeTable extends StatelessWidget {
                       createTimeTableCell(nRow, nCol),
                   ])
               ],
-            )));
+            )),
+        bottomNavigationBar: SizedBox(
+            height: nBnbHeight,
+            child: BottomNavigationBar(items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.apps_rounded, color: Colors.white),
+                  label: '時間割'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.assessment_outlined, color: Colors.white),
+                  label: '単位'),
+            ], onTap: _onBnbTap, backgroundColor: colorItem)));
   }
 }
 
@@ -167,6 +180,9 @@ class Next extends StatefulWidget {
   Next({required this.strCdDay, required this.nHour});
   _NextState createState() => _NextState();
 }
+
+// ボトムバータップ
+void _onBnbTap(int index) {}
 
 class _NextState extends State<Next> {
   @override
