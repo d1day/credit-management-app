@@ -10,13 +10,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nDeviceWidth = MediaQuery.of(context).size.width;
+    final nDeviceHeight = MediaQuery.of(context).size.height;
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TimeTable(),
+      home: TimeTable(nDeviceWidth: nDeviceWidth, nDeviceHeight: nDeviceHeight),
     );
   }
 }

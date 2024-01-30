@@ -1,17 +1,42 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
 
+// デザイン
 // バーの色
-const colorBar = Color.fromARGB(255, 122, 204, 241);
+const colorBar = Color.fromARGB(255, 169, 210, 243);
 // 枠線の太さ
-const nWidth = 0.5;
+const double nWidth = 0.5;
+// 時間の列の幅
+double nWidthHour = 0;
+// 曜日の行の高さ
+double nHeightDay = 0;
+// 通常のセルの幅
+double nWidthCell = 0;
+// 通常のセルの高さ
+double nHeightCell = 0;
+// 左右のスペース
+const double nSideSpace = 10;
+// 上下のスペース
+const double nTopAndBottomSpace = 20;
+// 表の色
+const Color colorItem = Color.fromARGB(255, 169, 210, 243);
+// 表の文字の色
+const Color colorItemText = Colors.black;
+
 // 時間数
-int numHour = 6;
+final int numHour = 6;
 // 曜日
-int numDay = 6;
+final int numDay = 6;
 
 class TimeTable extends StatelessWidget {
-  const TimeTable({super.key});
+  const TimeTable(
+      {super.key, required this.nDeviceWidth, required this.nDeviceHeight});
+  //
+  final double nDeviceWidth;
+  final double nDeviceHeight;
+
+  //時間割取得
+  getTimeTable(int nYear, String strClsSemestar) {}
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +46,17 @@ class TimeTable extends StatelessWidget {
     for (int i = -10; i < 10; i++) {
       lstYear.add((nYear + i).toString());
     }
+
+    final nAppBarHeight = AppBar().preferredSize.height;
+    nWidthHour = nDeviceWidth / 14;
+    nHeightDay = nDeviceHeight / 20;
+    nWidthCell = (nDeviceWidth - nWidthHour - (nSideSpace * 2)) / numDay;
+    nHeightCell = (nDeviceHeight -
+                nAppBarHeight -
+                nHeightDay -
+                (nTopAndBottomSpace * 2)) /
+            numHour -
+        5;
 
     return Scaffold(
         appBar: AppBar(
@@ -46,58 +82,66 @@ class TimeTable extends StatelessWidget {
           child: ListView(children: const [ListTile(title: Text('メニュー１'))]),
         ),
         body: Padding(
-            padding: const EdgeInsets.only(right: 30, bottom: 30),
-            child: GridView.builder(
-              itemCount: (numDay + 1) * (numHour + 1),
-              itemBuilder: (context, index) {
-                return createTimeTableCell(index);
-              },
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: numDay + 1, childAspectRatio: 1 / 1.5),
+            padding: const EdgeInsets.fromLTRB(
+                nSideSpace, nTopAndBottomSpace, nSideSpace, nTopAndBottomSpace),
+            child: Column(
+              children: <Widget>[
+                for (int nRow = 0; nRow < numHour + 1; nRow++)
+                  Row(children: [
+                    for (int nCol = 0; nCol < numDay + 1; nCol++)
+                      createTimeTableCell(nRow, nCol),
+                  ])
+              ],
             )));
   }
 }
 
-Widget createTimeTableCell(int index) {
-  if (index == 0) {
+Widget createTimeTableCell(int nRow, int nCol) {
+  if (nRow == 0 && nCol == 0) {
     // 左上の空白
-    return Container();
-  } else if (index < numDay + 1) {
+    return SizedBox(
+      height: nHeightDay,
+      width: nWidthHour,
+    );
+  } else if (nRow == 0) {
     // 曜日
-    return Padding(
-        padding: const EdgeInsets.only(top: 30),
-        child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(width: nWidth, color: Colors.white),
-              color: const Color.fromARGB(255, 58, 165, 253),
-            ),
-            child: Center(
-                child: Text(
-              lstDay[numDay != 7 ? index : index - 1],
-              style: const TextStyle(color: Colors.white),
-            ))));
-  } else if (index % (numDay + 1) == 0) {
+    return Container(
+        width: nWidthCell,
+        height: nHeightDay,
+        decoration: BoxDecoration(
+          border: Border.all(width: nWidth, color: Colors.white),
+          color: colorItem,
+        ),
+        child: Center(
+            child: Text(
+          lstDay[numDay != lstDay.length ? nCol : nCol - 1],
+          style: const TextStyle(color: colorItemText),
+        )));
+  } else if (nCol == 0) {
     // 数字
-    return Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: nWidth, color: Colors.white),
-                color: const Color.fromARGB(255, 58, 165, 253)),
-            width: 30,
-            child: Center(
-                child: Text(
-              (index / (numDay + 1)).floor().toString(),
-              style: const TextStyle(color: Colors.white),
-            ))));
+    return Container(
+        width: nWidthHour,
+        height: nHeightCell,
+        decoration: BoxDecoration(
+            border: Border.all(width: nWidth, color: Colors.white),
+            color: colorItem),
+        child: Center(
+            child: Text(
+          nRow.toString(),
+          style: const TextStyle(color: colorItemText),
+        )));
   } else {
     // 授業
     return TimeTableCell(
         strIdLesson: 'a',
-        strCdDay: lstDay[numDay != 7
-            ? ((index + 1) % (numDay + 1) + numDay) % (numDay + 1)
-            : ((index + 1) % (numDay + 1) + (numDay - 1)) % (numDay + 1)],
-        nHour: (index / (numDay + 1)).floor());
+        strNmDay: lstDay[numDay != lstDay.length
+            ? nCol < lstDay.length - 1
+                ? nCol + 1
+                : 0
+            : nCol != 7
+                ? nCol
+                : 0],
+        nHour: nRow);
   }
 }
 
@@ -148,10 +192,10 @@ class TimeTableCell extends StatefulWidget {
   const TimeTableCell(
       {super.key,
       required this.strIdLesson,
-      required this.strCdDay,
+      required this.strNmDay,
       required this.nHour});
   final String strIdLesson;
-  final String strCdDay;
+  final String strNmDay;
   final int nHour;
 
   @override
@@ -164,10 +208,13 @@ class _TimeTableCellState extends State<TimeTableCell> {
     return InkWell(
         onTap: () {
           selectLesson(
-              context, widget.strIdLesson, widget.strCdDay, widget.nHour);
+              context, widget.strIdLesson, widget.strNmDay, widget.nHour);
         },
         child: Container(
-          decoration: BoxDecoration(border: Border.all(width: nWidth)),
+          height: nHeightCell,
+          width: nWidthCell,
+          decoration: BoxDecoration(
+              border: Border.all(width: nWidth, color: colorItem)),
           // child: Text(widget.strCdDay + widget.nHour.toString()),
         ));
   }
