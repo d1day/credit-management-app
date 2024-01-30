@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
+import 'db_helper.dart';
 
 // デザイン
 // バーの色
@@ -16,6 +17,8 @@ double nHeightDay = 0;
 double nWidthCell = 0;
 // 通常のセルの高さ
 double nHeightCell = 0;
+// 表の丸み
+double nRadius = 5;
 // 左右のスペース
 const double nSideSpace = 10;
 // 上下のスペース
@@ -104,7 +107,7 @@ class TimeTable extends StatelessWidget {
                   label: '時間割'),
               BottomNavigationBarItem(
                   icon: Icon(Icons.assessment_outlined, color: Colors.white),
-                  label: '単位'),
+                  label: '単位管理'),
             ], onTap: _onBnbTap, backgroundColor: colorItem)));
   }
 }
@@ -122,9 +125,11 @@ Widget createTimeTableCell(int nRow, int nCol) {
         width: nWidthCell,
         height: nHeightDay,
         decoration: BoxDecoration(
-          border: Border.all(width: nWidth, color: Colors.white),
-          color: colorItem,
-        ),
+            border: Border.all(width: nWidth, color: Colors.white),
+            color: colorItem,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(nCol == 1 ? nRadius : 0),
+                topRight: Radius.circular(nCol == numDay ? nRadius : 0))),
         child: Center(
             child: Text(
           lstDay[numDay != lstDay.length ? nCol : nCol - 1],
@@ -137,7 +142,12 @@ Widget createTimeTableCell(int nRow, int nCol) {
         height: nHeightCell,
         decoration: BoxDecoration(
             border: Border.all(width: nWidth, color: Colors.white),
-            color: colorItem),
+            color: colorItem,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(
+                  nRow == 1 ? nRadius : 0,
+                ),
+                bottomLeft: Radius.circular(nRow == numHour ? nRadius : 0))),
         child: Center(
             child: Text(
           nRow.toString(),
@@ -149,7 +159,7 @@ Widget createTimeTableCell(int nRow, int nCol) {
         strIdLesson: 'a',
         strNmDay: lstDay[numDay != lstDay.length
             ? nCol < lstDay.length - 1
-                ? nCol + 1
+                ? nCol
                 : 0
             : nCol != 7
                 ? nCol
