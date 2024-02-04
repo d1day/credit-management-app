@@ -1,9 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatabaseHelper {
+  static late DatabaseFactory databaseFactory;
+
   static Future<Database> initializeDatabase() async {
+    databaseFactory = databaseFactoryFfi;
     final database = await openDatabase(
       join(await getDatabasesPath(), 'my_database.db'),
       // 外部キー制約を有効にする
@@ -25,23 +29,33 @@ class DatabaseHelper {
             TXT_FREE TEXT
           )
         ''');
-        await db.execute('''
-          CREATE TABLE timetable (
-            N_SCHOOL_YEAR INTEGER,
-            CLS_SEMESTER TEXT,
-            NM_DAY TEXT,
-            N_PERIOD INTEGER,
-            ID_LECTURE INTEGER,
-            FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
-          )
-        ''');
+        // await db.execute('''
+        // CREATE TABLE timetable (
+        // N_SCHOOL_YEAR INTEGER,
+        //CLS_SEMESTER TEXT,
+        //NM_DAY TEXT,
+        //N_PERIOD INTEGER,
+        //ID_LECTURE INTEGER,
+        //FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
+        //)
+        //''');
       },
       version: 1,
     );
     return database;
   }
 
-  //登録処理
+  Future<void> insertLectureData(Map<String, dynamic> lectureData) async {
+    final db = await initializeDatabase();
+    await db.insert('lecturetable', lectureData,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> insertTimetableData(Map<String, dynamic> timetableData) async {
+    final db = await initializeDatabase();
+    await db.insert('timetable', timetableData,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
 }
 
 //DB関連
