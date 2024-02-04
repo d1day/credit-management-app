@@ -1,7 +1,7 @@
-﻿# A5:ER FORMAT:17
+﻿# A5:ER FORMAT:18
 # A5:ER ENCODING:UTF8
 # A5:ER Mk-1 Copyright © 2007 m.matsubara
-# A5:SQL Mk-2 Version 2.18.4 Copyright © 1997 - 2023 m.matsubara
+# A5:SQL Mk-2 Version 2.19.0 Copyright © 1997 - 2024 m.matsubara
 #  https://a5m2.mmatsubara.com
 
 [Manager]
@@ -39,29 +39,10 @@ ShowCommonAttributes=0
 BugFixEntityWidth=1
 
 [Entity]
-PName=M_SCHEDULE
-LName=時間割
-Comment=
-TableOption=
-Page=MAIN
-Left=900
-Top=200
-Field="年度","N_SCHOOL_YEAR","INTEGER",,0,"","",$FFFFFFFF,""
-Field="学期","CLS_SEMESTER","TEXT",,1,"","",$FFFFFFFF,""
-Field="曜日","NM_DAY","TEXT",,2,"","",$FFFFFFFF,""
-Field="時限","N_PERIOD","INTEGER",,3,"","",$FFFFFFFF,""
-Field="授業コード","CD_LECTURE","TEXT",,4,"","",$FFFFFFFF,""
-EffectMode=None
-Color=$000000
-BkColor=$FFFFFF
-ModifiedDateTime=20240103151411
-Position="MAIN",900,200,185,164
-ZOrder=1
-
-[Entity]
 PName=M_CREDITS
 LName=授業
 Comment=
+TableInnerOption=
 TableOption=
 Page=MAIN
 Left=450
@@ -87,6 +68,7 @@ ZOrder=2
 PName=M_DIV_LECTURE
 LName=授業区分
 Comment=
+TableInnerOption=
 TableOption=
 Page=MAIN
 Left=50
@@ -123,54 +105,34 @@ TermPos1=R
 TermPos2=R
 ZOrder=8
 
-[Relation]
-Entity1=M_CREDITS
-Entity2=M_SCHEDULE
-RelationType1=1
-RelationType2=4
-Fields1=ID_LECTURE
-Fields2=CD_LECTURE
-Cardinarity1=
-Cardinarity2=
-Position="MAIN",0,2236,6058,919,R,R,""
-Dependence=0
-Caption=
-PName=
-ModifiedDateTime=20240103144704
-LineMode=0
-Bar1=224
-Bar2=606
-Bar3=92
-TermPos1=R
-TermPos2=R
-ZOrder=13
-
 [Entity]
 PName=t_timetable
 LName=時間割
 Comment=
+TableInnerOption=
 TableOption=
-Page=Main
+Page=MAIN
 Left=700
-Top=650
+Top=600
 Field="年度","n_year","INTEGER",,0,"","",$FFFFFFFF,""
 Field="学期","cls_semestar","TEXT",,1,"","",$FFFFFFFF,""
 Field="曜日","nm_day","TEXT",,2,"","",$FFFFFFFF,""
-Field="時間","n_hour","INTEGER",,3,"","",$FFFFFFFF,""
+Field="時間","n_reriod","INTEGER",,3,"","",$FFFFFFFF,""
 Field="授業ID","id_lecture","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
 EffectMode=None
 Color=$000000
 BkColor=$FFFFFF
-ModifiedDateTime=20240116220403
-Position="Main",700,650,132,135
+ModifiedDateTime=20240204170359
+Position="MAIN",700,600,132,135
 ZOrder=14
 
 [Entity]
 PName=t_attendance
 LName=出欠
 Comment=
+TableInnerOption=
 TableOption=
-Page=Main
+Page=MAIN
 Left=350
 Top=650
 Field="授業ID","id_lecture","INTEGER","NOT NULL",0,"","",$FFFFFFFF,""
@@ -182,7 +144,7 @@ EffectMode=None
 Color=$000000
 BkColor=$FFFFFF
 ModifiedDateTime=20240116220332
-Position="Main",350,650
+Position="MAIN",350,650
 ZOrder=15
 
 [Relation]
