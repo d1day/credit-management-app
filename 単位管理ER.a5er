@@ -117,12 +117,12 @@ Top=600
 Field="年度","n_year","INTEGER",,0,"","",$FFFFFFFF,""
 Field="学期","cls_semestar","TEXT",,1,"","",$FFFFFFFF,""
 Field="曜日","nm_day","TEXT",,2,"","",$FFFFFFFF,""
-Field="時間","n_reriod","INTEGER",,3,"","",$FFFFFFFF,""
+Field="時間","n_period","INTEGER",,3,"","",$FFFFFFFF,""
 Field="授業ID","id_lecture","INTEGER","NOT NULL",,"","",$FFFFFFFF,""
 EffectMode=None
 Color=$000000
 BkColor=$FFFFFF
-ModifiedDateTime=20240204170359
+ModifiedDateTime=20240210181157
 Position="MAIN",700,600,132,135
 ZOrder=14
 
