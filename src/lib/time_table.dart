@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
-import 'db_helper.dart';
+import 'cls_insert.dart';
 
 // デザイン
 // バーの色
@@ -168,137 +168,8 @@ Widget createTimeTableCell(int nRow, int nCol) {
   }
 }
 
-// 授業選択時
-void selectLesson(
-    BuildContext context, String strIdLesson, String strCdDay, int nHour) {
-  // 画面遷移時の処理
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => Next(
-        strCdDay: strCdDay,
-        nHour: nHour,
-      ),
-    ),
-  );
-}
-
-//授業・単位数登録画面
-class Next extends StatefulWidget {
-  final String strCdDay;
-  final int nHour;
-  @override
-  Next({required this.strCdDay, required this.nHour});
-  _NextState createState() => _NextState();
-}
-
 // ボトムバータップ
 void _onBnbTap(int index) {}
-
-class _NextState extends State<Next> {
-  final TextEditingController jugyouController = TextEditingController();
-  final TextEditingController koushiController = TextEditingController();
-  final TextEditingController kyoushituController = TextEditingController();
-  String selectedUnit = '';
-  final TextEditingController memoController = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    String resultText = widget.strCdDay + widget.nHour.toString();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(resultText),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(children: [
-          TextField(
-            controller: jugyouController,
-            onChanged: (value) {},
-            decoration: InputDecoration(
-              labelText: '授業名',
-            ),
-          ),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: koushiController,
-            onChanged: (value) {},
-            decoration: InputDecoration(
-              labelText: '講師名',
-            ),
-          ),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: kyoushituController,
-            onChanged: (value) {},
-            decoration: InputDecoration(
-              labelText: '教室',
-            ),
-          ),
-          SizedBox(height: 16.0),
-          DropdownButton<String>(
-            value: selectedUnit,
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedUnit = newValue!;
-              });
-            },
-            items: <String>['', '1', '2', '3', '4']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            hint: Text('選択してください'),
-          ),
-          SizedBox(height: 16.0),
-          TextField(
-            controller: memoController,
-            onChanged: (value) {},
-            decoration: InputDecoration(
-              labelText: 'メモ',
-            ),
-          ),
-          SizedBox(height: 16.0),
-          ElevatedButton(
-            onPressed: () {
-              _insertData();
-            },
-            child: Text('データ登録'),
-          ),
-        ]),
-      ),
-    );
-  }
-
-  void _insertData() async {
-    String jugyou = jugyouController.text;
-    String koushi = koushiController.text;
-    String kyoushitu = kyoushituController.text;
-    String memo = memoController.text;
-
-    if (jugyou.isNotEmpty && koushi.isNotEmpty) {
-      DatabaseHelper databaseHelper = DatabaseHelper();
-
-      await databaseHelper.insertLectureData({
-        'NM_LECTURE': jugyou,
-        'NM_TEACHER': koushi,
-        'NM_CLASS_ROOM': kyoushitu,
-        'N_CREDIT': selectedUnit,
-        'TXT_FREE': memo,
-      });
-
-      print('Data Inserted: $jugyou, $koushi, $kyoushitu, $selectedUnit,$memo');
-
-      jugyouController.clear();
-      koushiController.clear();
-      kyoushituController.clear();
-      selectedUnit = '';
-      memoController.clear();
-    } else {}
-  }
-}
 
 // 授業用のセル
 class TimeTableCell extends StatefulWidget {

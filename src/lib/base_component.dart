@@ -28,6 +28,18 @@ const lstDay = [
 // 学期
 const lstSemestar = ['前期', '後期'];
 
+//円の色
+const lstCirclecolor = <Color>[
+  Color(0xFFF8BBD4),
+  Color(0xFFEF9A9A),
+  Color(0xFFFFAB91),
+  Color(0xFFAED581),
+  Color(0xFF81C784),
+  Color(0xFF4DB6AC),
+  Color(0xFFFFF59D),
+  Color(0xFFCE93D8),
+];
+
 // 自作Widget
 // コンボボックス
 class CmbBase extends StatefulWidget {

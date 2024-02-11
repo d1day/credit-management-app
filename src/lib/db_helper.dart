@@ -29,16 +29,32 @@ class DatabaseHelper {
             TXT_FREE TEXT
           )
         ''');
-        // await db.execute('''
-        // CREATE TABLE timetable (
-        // N_SCHOOL_YEAR INTEGER,
-        //CLS_SEMESTER TEXT,
-        //NM_DAY TEXT,
-        //N_PERIOD INTEGER,
-        //ID_LECTURE INTEGER,
-        //FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
-        //)
-        //''');
+        await db.execute('''
+          CREATE TABLE M_SCHEDULE (
+            N_SCHOOL_YEAR INTEGER,
+            CLS_SEMESTER TEXT,
+            NM_DAY TEXT,
+            N_PERIOD INTEGER,
+            ID_LECTURE INTEGER,
+            FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE M_DIV_LECTURE(
+            CD_DIV_LECTURTE TEXT,
+            NM_DIV_LECTURE TEXT,
+            ID_LECTURE INTEGER,
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE t_attendance(
+            ID_LECTURE INTEGER,
+            n_attendance INTEGER,
+            n_absence INTEGER,
+            n_behind INTEGER,
+            n_official_absence INTEGER,
+          )
+        ''');
       },
       version: 1,
     );
@@ -51,9 +67,9 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> insertTimetableData(Map<String, dynamic> timetableData) async {
+  Future<void> insertSCHEDULEData(Map<String, dynamic> scheduleData) async {
     final db = await initializeDatabase();
-    await db.insert('timetable', timetableData,
+    await db.insert('M_SCHEDULE', scheduleData,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
