@@ -39,6 +39,14 @@ class DatabaseHelper {
         //FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
         //)
         //''');
+        await db.execute('''
+        CREATE TABLE lookuptable(
+          CD_LOOKUP_TYPE TEXT,
+          CD_LOOKUP TEXT,
+          NM_LOOKUP TEXT,
+          PRIMARY KEY(CD_LOOKUP_TYPE, CD_LOOKUP, NM_LOOKUP)
+        )
+        ''');
       },
       version: 1,
     );
@@ -56,18 +64,38 @@ class DatabaseHelper {
     await db.insert('timetable', timetableData,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
+  Future<List<Map>> selectTimeTableData(
+      int nYear, String strClsSemestar) async {
+    final db = await initializeDatabase();
+    final result = await db.rawQuery('''
+      select
+        t.nm_day,
+        t.n_period,
+        t.id_lecture,
+        c.nm_lecture
+      from
+        timetable t
+        inner join lecturetable c on
+          t.id_lecture = c.id_lecture
+        where
+          t.n_year = ${XDb.sqlEscape(nYear.toString())} and
+          t.cls_semestar = ${XDb.sqlEscape(strClsSemestar)}
+      ''');
+    return Future<List<Map>>.value(result);
+  }
 }
 
 //DB関連
 class XDb {
-  String sqlEscape(String str) {
+  static String sqlEscape(String str) {
     str.replaceAll("'", "''");
     str.replaceAll('"', '""');
     //改行コード？
     return str;
   }
 
-  String sqlEscapeLike(String str) {
+  static String sqlEscapeLike(String str) {
     sqlEscape(str);
     str.replaceAll('%', '');
     str.replaceAll('_', '');
