@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'time_table.dart';
-//import 'db_helper.dart';
-//import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   runApp(const MyApp());
