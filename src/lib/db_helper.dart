@@ -29,23 +29,32 @@ class DatabaseHelper {
             TXT_FREE TEXT
           )
         ''');
-        // await db.execute('''
-        // CREATE TABLE timetable (
-        // N_SCHOOL_YEAR INTEGER,
-        //CLS_SEMESTER TEXT,
-        //NM_DAY TEXT,
-        //N_PERIOD INTEGER,
-        //ID_LECTURE INTEGER,
-        //FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE))
-        //)
-        //''');
         await db.execute('''
-        CREATE TABLE lookuptable(
-          CD_LOOKUP_TYPE TEXT,
-          CD_LOOKUP TEXT,
-          NM_LOOKUP TEXT,
-          PRIMARY KEY(CD_LOOKUP_TYPE, CD_LOOKUP, NM_LOOKUP)
-        )
+          CREATE TABLE M_SCHEDULE (
+            N_SCHOOL_YEAR INTEGER,
+            CLS_SEMESTER TEXT,
+            NM_DAY TEXT,
+            N_PERIOD INTEGER,
+            ID_LECTURE INTEGER,
+            PRIMARY KEY (N_SCHOOL_YEAR, CLS_SEMESTER, NM_DAY, N_PERIOD),
+            FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE)
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE M_DIV_LECTURE(
+            CD_DIV_LECTURTE TEXT PRIMARY KEY,
+            NM_DIV_LECTURE TEXT,
+            ID_LECTURE INTEGER
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE t_attendance(
+            ID_LECTURE INTEGER PRIMARY KEY,
+            n_attendance INTEGER,
+            n_absence INTEGER,
+            n_behind INTEGER,
+            n_official_absence INTEGER
+          )
         ''');
       },
       version: 1,
@@ -59,9 +68,9 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> insertTimetableData(Map<String, dynamic> timetableData) async {
+  Future<void> insertSCHEDULEData(Map<String, dynamic> scheduleData) async {
     final db = await initializeDatabase();
-    await db.insert('timetable', timetableData,
+    await db.insert('M_SCHEDULE', scheduleData,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -69,18 +78,19 @@ class DatabaseHelper {
       int nYear, String strClsSemestar) async {
     final db = await initializeDatabase();
     final result = await db.rawQuery('''
-      select
-        t.nm_day,
-        t.n_period,
-        t.id_lecture,
-        c.nm_lecture
-      from
-        timetable t
-        inner join lecturetable c on
-          t.id_lecture = c.id_lecture
-        where
-          t.n_year = ${XDb.sqlEscape(nYear.toString())} and
-          t.cls_semestar = ${XDb.sqlEscape(strClsSemestar)}
+      SELECT
+        s.NM_DAY,
+        s.N_PERIOD,
+        s.ID_LECTURE,
+        l.NM_LECTURE,
+        l.NM_CLASS_ROOM
+      FROM
+        M_SCHEDULE s
+        INNER JOIN lecturetable l ON
+          s.ID_LECTURE = l.ID_LECTURE
+        WHERE
+          s.N_SCHOOL_YEAR = ${XDb.sqlEscape(nYear.toString())} and
+          s.CLS_SEMESTER = '${XDb.sqlEscape(strClsSemestar)}'
       ''');
     return Future<List<Map>>.value(result);
   }

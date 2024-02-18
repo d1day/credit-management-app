@@ -60,10 +60,16 @@ class TimeTable extends StatelessWidget {
     return Future<List<Map>>.value(result);
   }
 
-  void setTimeTableCell(String strNmDay, int nPeriod) {
+  static LectureInfo getLectureInfo(String strNmDay, int nPeriod, nIdLecture) {
+    var info = new LectureInfo();
     for (int i = 0; i < tblTimeTable.length; i++) {
-      tblTimeTable[i]['nm_lecture'];
+      if (int.parse(tblTimeTable[i]['id_lecture']) == nIdLecture) {
+        info.id_lecture = int.parse(tblTimeTable[i]['id_lecture']);
+        info.nm_lecture = tblTimeTable[i]['nm_lecuture'].toString();
+        info.nm_class_room = tblTimeTable[i]['nm_class_room'].toString();
+      }
     }
+    return info;
   }
 
   @override
@@ -221,8 +227,6 @@ class TimeTableCell extends StatefulWidget {
   });
   final String strNmDay;
   final int nPeriod;
-  String strIdLecture = '';
-  String strNmLecture = '';
 
   @override
   State<TimeTableCell> createState() => _TimeTableCellState();
@@ -230,19 +234,22 @@ class TimeTableCell extends StatefulWidget {
 
 class _TimeTableCellState extends State<TimeTableCell> {
   @override
+  String strIdLecture = '';
+  String strNmLecture = '';
+  String strNmClassRomm = '';
   Widget build(BuildContext context) {
     for (int i = 0; i < tblTimeTable.length; i++) {
       if (tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
           int.parse(tblTimeTable[i]['N_PERIOD']) == widget.nPeriod) {
-        widget.strIdLecture = tblTimeTable[i]['ID_LECTURE'];
-        widget.strNmLecture = tblTimeTable[i]['NM_LECTURE'];
+        strIdLecture = tblTimeTable[i]['ID_LECTURE'];
+        strNmLecture = tblTimeTable[i]['NM_LECTURE'];
+        strNmClassRomm = tblTimeTable[i]['NM_CLASS_ROOM'];
         break;
       }
     }
     return InkWell(
         onTap: () {
-          selectLesson(
-              context, widget.strIdLecture, widget.strNmDay, widget.nPeriod);
+          selectLesson(context, strIdLecture, widget.strNmDay, widget.nPeriod);
         },
         child: Container(
             height: nHeightCell,
@@ -251,8 +258,16 @@ class _TimeTableCellState extends State<TimeTableCell> {
                 border: Border.all(width: nWidth, color: colorItem)),
             child: Column(
               children: [
-                Text(widget.strNmLecture),
+                Text(strNmLecture),
+                Text(strNmClassRomm),
               ],
             )));
   }
+}
+
+class LectureInfo {
+  LectureInfo({this.id_lecture, this.nm_lecture, this.nm_class_room});
+  int? id_lecture;
+  String? nm_lecture;
+  String? nm_class_room;
 }
