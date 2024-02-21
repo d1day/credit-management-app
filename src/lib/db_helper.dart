@@ -23,7 +23,7 @@ class DatabaseHelper {
       },
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE lecturetable (
+          CREATE TABLE M_CREDITS (
             ID_LECTURE INTEGER PRIMARY KEY,
             CD_DIV_LECTURTE TEXT,
             NM_LECTURE TEXT,
@@ -43,19 +43,20 @@ class DatabaseHelper {
             NM_DAY TEXT,
             N_PERIOD INTEGER,
             ID_LECTURE INTEGER,
-            FOREIGN KEY (ID_LECTURE) references lecturetable(ID_LECTURE)
+            PRIMARY KEY (N_SCHOOL_YEAR, CLS_SEMESTER, NM_DAY, N_PERIOD),
+            FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_LECTURE)
           )
         ''');
         await db.execute('''
           CREATE TABLE M_DIV_LECTURE(
-            CD_DIV_LECTURTE TEXT,
+            CD_DIV_LECTURTE TEXT PRIMARY KEY,
             NM_DIV_LECTURE TEXT,
             ID_LECTURE INTEGER
           )
         ''');
         await db.execute('''
-          CREATE TABLE t_attendance(
-            ID_LECTURE INTEGER,
+          CREATE TABLE T_ATTENDANCE(
+            ID_LECTURE INTEGER PRIMARY KEY,
             N_ATTENDANCE INTEGER,
             N_ABSENCE INTEGER,
             N_BEHIND INTEGER,
@@ -67,29 +68,50 @@ class DatabaseHelper {
     return database;
   }
 
-  Future<void> insertLectureData(Map<String, dynamic> lectureData) async {
+  Future<int> insertLectureData(Map<String, dynamic> lectureData) async {
     final db = await initializeDatabase();
-    await db.insert('lecturetable', lectureData,
+    return await db.insert('M_CREDITS', lectureData,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> insertSCHEDULEData(Map<String, dynamic> scheduleData) async {
+  Future<void> insertSCHEDULEData(int id) async {
     final db = await initializeDatabase();
-    await db.insert('M_SCHEDULE', scheduleData,
+    await db.insert('M_SCHEDULE', {'ID_LECTURE': id},
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<Map>> selectTimeTableData(
+      int nYear, String strClsSemestar) async {
+    final db = await initializeDatabase();
+    final result = await db.rawQuery('''
+      SELECT
+        s.NM_DAY,
+        s.N_PERIOD,
+        s.ID_LECTURE,
+        l.NM_LECTURE,
+        l.NM_CLASS_ROOM
+      FROM
+        M_SCHEDULE s
+        INNER JOIN M_CREDITS l ON
+          s.ID_LECTURE = l.ID_LECTURE
+        WHERE
+          s.N_SCHOOL_YEAR = ${XDb.sqlEscape(nYear.toString())} and
+          s.CLS_SEMESTER = '${XDb.sqlEscape(strClsSemestar)}'
+      ''');
+    return Future<List<Map>>.value(result);
   }
 }
 
 //DB関連
 class XDb {
-  String sqlEscape(String str) {
+  static String sqlEscape(String str) {
     str.replaceAll("'", "''");
     str.replaceAll('"', '""');
     //改行コード？
     return str;
   }
 
-  String sqlEscapeLike(String str) {
+  static String sqlEscapeLike(String str) {
     sqlEscape(str);
     str.replaceAll('%', '');
     str.replaceAll('_', '');

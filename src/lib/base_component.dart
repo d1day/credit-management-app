@@ -47,11 +47,12 @@ class CmbBase extends StatefulWidget {
       {super.key,
       this.firstIndex = 0,
       required this.list,
-      required this.color});
+      required this.color,
+      required this.onSelect});
   final List<String> list;
   final Color color;
   final int firstIndex;
-
+  final Function(String?) onSelect;
   @override
   State<CmbBase> createState() => _CmbBaseState();
 }
@@ -63,7 +64,12 @@ class _CmbBaseState extends State<CmbBase> {
     if (dropdownValue == "") {
       dropdownValue = widget.list[widget.firstIndex];
     }
+
     const fontColor = Colors.black;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onSelect(dropdownValue);
+    });
 
     return DropdownButton<String>(
       value: dropdownValue,
@@ -81,6 +87,9 @@ class _CmbBaseState extends State<CmbBase> {
         setState(() {
           dropdownValue = value!;
         });
+        if (value != null) {
+          widget.onSelect(value);
+        }
       },
       items: widget.list.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(

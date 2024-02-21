@@ -47,7 +47,7 @@ class _InsertPageState extends State<InsertPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: key, // Assign the GlobalKey<FormState>
+          key: key,
           child: Column(children: [
             TextFormField(
               controller: jugyouController,
@@ -148,7 +148,7 @@ class _InsertPageState extends State<InsertPage> {
     if (jugyou.isNotEmpty) {
       DatabaseHelper databaseHelper = DatabaseHelper();
 
-      await databaseHelper.insertLectureData({
+      int insertID = await databaseHelper.insertLectureData({
         'NM_LECTURE': jugyou,
         'NM_TEACHER': koushi,
         'NM_CLASS_ROOM': kyoushitu,
@@ -156,6 +156,8 @@ class _InsertPageState extends State<InsertPage> {
         'CLS_COLOR': colorUnit,
         'TXT_FREE': memo,
       });
+
+      await databaseHelper.insertSCHEDULEData(insertID);
 
       print(
           'Data Inserted: $jugyou, $koushi, $kyoushitu, $selectedUnit,$colorUnit,$memo');
