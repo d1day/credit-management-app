@@ -51,7 +51,8 @@ class DatabaseHelper {
           CREATE TABLE M_DIV_LECTURE(
             CD_DIV_LECTURTE TEXT PRIMARY KEY,
             NM_DIV_LECTURE TEXT,
-            ID_LECTURE INTEGER
+            ID_LECTURE INTEGER,
+            FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_LECTURE)
           )
         ''');
         await db.execute('''
@@ -60,7 +61,8 @@ class DatabaseHelper {
             N_ATTENDANCE INTEGER,
             N_ABSENCE INTEGER,
             N_BEHIND INTEGER,
-            N_OFFICIAL_ABSENCE INTEGER
+            N_OFFICIAL_ABSENCE INTEGER,
+            FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_LECTURE)
           )
         ''');
       },
@@ -77,6 +79,18 @@ class DatabaseHelper {
   Future<void> insertSCHEDULEData(int id) async {
     final db = await initializeDatabase();
     await db.insert('M_SCHEDULE', {'ID_LECTURE': id},
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> insertDIVLECTURE(int id) async {
+    final db = await initializeDatabase();
+    await db.insert('M_DIV_LECTURE', {'ID_LECTURE': id},
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> insertATTENDANCE(int id) async {
+    final db = await initializeDatabase();
+    await db.insert('T_ATTENDANCE', {'ID_LECTURE': id},
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 

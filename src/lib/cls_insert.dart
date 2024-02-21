@@ -159,6 +159,10 @@ class _InsertPageState extends State<InsertPage> {
 
       await databaseHelper.insertSCHEDULEData(insertID);
 
+      await databaseHelper.insertDIVLECTURE(insertID);
+
+      await databaseHelper.insertATTENDANCE(insertID);
+
       print(
           'Data Inserted: $jugyou, $koushi, $kyoushitu, $selectedUnit,$colorUnit,$memo');
 
