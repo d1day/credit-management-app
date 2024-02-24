@@ -76,9 +76,9 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> insertSCHEDULEData(int id) async {
+  Future<void> insertSCHEDULEData(Map<String, dynamic> scheduleData) async {
     final db = await initializeDatabase();
-    await db.insert('M_SCHEDULE', {'ID_LECTURE': id},
+    await db.insert('M_SCHEDULE', scheduleData,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 

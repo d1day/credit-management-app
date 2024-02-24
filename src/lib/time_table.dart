@@ -32,6 +32,9 @@ const Color colorItemText = Colors.black;
 // 時間割リスト
 List<Map> tblTimeTable = List<Map>.empty(growable: true);
 
+String? strYear;
+String? strClsSemestar;
+
 // 時間数
 final int numPeriod = 6;
 // 曜日
@@ -43,9 +46,6 @@ class TimeTable extends StatelessWidget {
   //
   final double nDeviceWidth;
   final double nDeviceHeight;
-
-  String? strYear;
-  String? strClsSemestar;
 
   //時間割取得
   static Future<List<Map>> getTimeTable(
@@ -240,16 +240,22 @@ class _TimeTableCellState extends State<TimeTableCell> {
   Widget build(BuildContext context) {
     for (int i = 0; i < tblTimeTable.length; i++) {
       if (tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
-          int.parse(tblTimeTable[i]['N_PERIOD']) == widget.nPeriod) {
-        strIdLecture = tblTimeTable[i]['ID_LECTURE'];
-        strNmLecture = tblTimeTable[i]['NM_LECTURE'];
-        strNmClassRomm = tblTimeTable[i]['NM_CLASS_ROOM'];
+          int.parse(tblTimeTable[i]['N_PERIOD'].toString()) == widget.nPeriod) {
+        strIdLecture = tblTimeTable[i]['ID_LECTURE'].toString();
+        strNmLecture = tblTimeTable[i]['NM_LECTURE'].toString();
+        strNmClassRomm = tblTimeTable[i]['NM_CLASS_ROOM'].toString();
         break;
       }
     }
     return InkWell(
         onTap: () {
-          selectLesson(context, strIdLecture, widget.strNmDay, widget.nPeriod);
+          selectLesson(
+              context,
+              int.parse(strYear.toString()),
+              strClsSemestar.toString(),
+              widget.strNmDay,
+              widget.nPeriod,
+              strIdLecture);
         },
         child: Container(
             height: nHeightCell,

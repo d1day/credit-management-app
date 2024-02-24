@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 import 'base_component.dart';
 
 // 授業選択時
-void selectLesson(
-    BuildContext context, String strIdLesson, String strCdDay, int nHour) {
+void selectLesson(BuildContext context, int nSchoolYear, String strClsSemester,
+    String strNmDay, int nPeriod, String strIdLesson) {
   // 画面遷移時の処理
   Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => new InsertPage(
-        strCdDay: strCdDay,
-        nHour: nHour,
+      builder: (context) => InsertPage(
+        nSchoolYear: nSchoolYear,
+        strClsSemestar: strClsSemester,
+        strNmDay: strNmDay,
+        nPeriod: nPeriod,
       ),
     ),
   );
@@ -19,10 +21,17 @@ void selectLesson(
 
 //授業・単位数登録画面
 class InsertPage extends StatefulWidget {
-  final String strCdDay;
-  final int nHour;
+  final int nSchoolYear;
+  final String strClsSemestar;
+  final String strNmDay;
+  final int nPeriod;
   @override
-  InsertPage({required this.strCdDay, required this.nHour});
+  const InsertPage(
+      {super.key,
+      required this.nSchoolYear,
+      required this.strClsSemestar,
+      required this.strNmDay,
+      required this.nPeriod});
   _InsertPageState createState() => _InsertPageState();
 }
 
@@ -37,7 +46,7 @@ class _InsertPageState extends State<InsertPage> {
 
   @override
   Widget build(BuildContext context) {
-    String resultText = widget.strCdDay + widget.nHour.toString();
+    String resultText = widget.strNmDay + widget.nPeriod.toString();
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -157,7 +166,13 @@ class _InsertPageState extends State<InsertPage> {
         'TXT_FREE': memo,
       });
 
-      await databaseHelper.insertSCHEDULEData(insertID);
+      await databaseHelper.insertSCHEDULEData({
+        'N_SCHOOL_YEAR': widget.nSchoolYear,
+        'CLS_SEMESTER': widget.strClsSemestar,
+        'NM_DAY': widget.strNmDay,
+        'N_PERIOD': widget.nPeriod,
+        'ID_LECTURE': insertID,
+      });
 
       await databaseHelper.insertDIVLECTURE(insertID);
 
