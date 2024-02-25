@@ -25,7 +25,6 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE M_CREDITS (
             ID_LECTURE INTEGER PRIMARY KEY,
-            CD_DIV_LECTURTE TEXT,
             NM_LECTURE TEXT,
             FLG_INTENSIVE_COURSE TEXT,
             NM_TEACHER TEXT,
@@ -48,11 +47,17 @@ class DatabaseHelper {
           )
         ''');
         await db.execute('''
-          CREATE TABLE M_DIV_LECTURE(
-            CD_DIV_LECTURTE TEXT PRIMARY KEY,
-            NM_DIV_LECTURE TEXT,
+          CREATE TABLE M_DIV_LECTURE_REL(
+            ID_DIV_LECTURTE INTEGER PRIMARY KEY,
             ID_LECTURE INTEGER,
             FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_LECTURE)
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE M_DIV_LECTURE_REL(
+            ID_DIV_LECTURE INTEGER PRIMARY KEY,
+            ID_LECTURE INTEGER PRIMARY KEY,
+            FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_DIV_LECTURE, ID_LECTURE)
           )
         ''');
         await db.execute('''
