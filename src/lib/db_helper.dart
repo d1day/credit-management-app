@@ -24,7 +24,7 @@ class DatabaseHelper {
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE M_LECTURE (
-            ID_LECTURE INTEGER PRIMARY KEY AUTOINCREMENT,
+            ID_LECTURE INTEGER PRIMARY KEY,
             NM_LECTURE TEXT,
             CLS_OPEN_CLASS TEXT,
             NM_TEACHER TEXT,
@@ -41,14 +41,12 @@ class DatabaseHelper {
             CLS_SEMESTER TEXT,
             NM_DAY TEXT,
             N_PERIOD INTEGER,
-            ID_LECTURE INTEGER,
-            PRIMARY KEY (N_SCHOOL_YEAR, CLS_SEMESTER, NM_DAY, N_PERIOD),
-            FOREIGN KEY (ID_LECTURE) references M_LECTURE(ID_LECTURE)
+            ID_LECTURE INTEGER
           )
         ''');
         await db.execute('''
           CREATE TABLE M_DIV_LECTURE_REL(
-            ID_DIV_LECTURTE INTEGER AUTOINCREMENT,
+            ID_DIV_LECTURTE INTEGER,
             ID_LECTURE INTEGER,
             PRIMARY KEY (ID_DIV_LECTURTE, ID_LECTURE),
             FOREIGN KEY (ID_LECTURE) references M_LECTURE(ID_LECTURE)
@@ -56,7 +54,7 @@ class DatabaseHelper {
         ''');
         await db.execute('''
           CREATE TABLE M_DIV_LECTURE(
-            ID_DIV_LECTURE INTEGER PRIMARY KEY,
+            ID_DIV_LECTURE INTEGER PRIMARY KEY AUTOINCREMENT,
             NM_DIV_LECTURE TEXT
           )
           ''');
@@ -77,6 +75,12 @@ class DatabaseHelper {
 
   Future<int> insertLectureData(DataLecture data) async {
     final db = await initializeDatabase();
+    await db
+        .rawQuery(
+            'select ID_LECTURE from M_LECTURE order by ID_LECTURE desc limit 1')
+        .then((value) => data.nIdLecture = value.isNotEmpty
+            ? int.parse(value[0]['ID_LECTURE'].toString()) + 1
+            : 0);
     await db.insert('M_LECTURE', {
       'ID_LECTURE': data.nIdLecture,
       'NM_LECTURE': data.strNmLecture,
@@ -88,12 +92,7 @@ class DatabaseHelper {
       'CLS_COLOR': data.strClsColor,
       'TXT_FREE': data.strTxtFree,
     });
-    int nIdLecture = 0;
-    await db
-        .rawQuery(
-            'select ID_LECTURE from M_LECTURE order by ID_LECTURE desc limit 1')
-        .then((value) => nIdLecture = int.parse(value[0].toString()));
-    return nIdLecture;
+    return int.parse(data.nIdLecture.toString());
   }
 
   Future<void> insertScheduleData(DataSchedule data) async {
@@ -101,7 +100,7 @@ class DatabaseHelper {
     await db.insert('M_SCHEDULE', {
       'N_SCHOOL_YEAR': data.nSchoolYear,
       'CLS_SEMESTER': data.strClsSemester,
-      'NM_DAY': data.strClsSemester,
+      'NM_DAY': data.strNmDay,
       'N_PERIOD': data.nPeriod,
       'ID_LECTURE': data.nIdLecture
     });
@@ -135,7 +134,8 @@ class DatabaseHelper {
   Future<List<Map>> selectTimeTableData(
       int nYear, String strClsSemestar) async {
     final db = await initializeDatabase();
-    final result = await db.rawQuery('''
+    List<Object> lst = [nYear, strClsSemestar];
+    final result = db.rawQuery('''
       SELECT
         s.NM_DAY,
         s.N_PERIOD,
@@ -147,23 +147,23 @@ class DatabaseHelper {
         INNER JOIN M_LECTURE l ON
           s.ID_LECTURE = l.ID_LECTURE
         WHERE
-          s.N_SCHOOL_YEAR = ${XDb.sqlEscape(nYear.toString())} and
-          s.CLS_SEMESTER = '${XDb.sqlEscape(strClsSemestar)}'
-      ''');
+          s.N_SCHOOL_YEAR = ? and
+          s.CLS_SEMESTER = ?
+      ''', lst);
     return Future<List<Map>>.value(result);
   }
 }
 
 class DataLecture {
-  final int? nIdLecture;
-  final String? strNmLecture;
-  final String? strClsOpenClass;
-  final String? strNmTeacher;
-  final String? strNmClassRoom;
-  final int? nCredit;
-  final String? strClsStatus;
-  final String? strClsColor;
-  final String? strTxtFree;
+  int? nIdLecture;
+  String? strNmLecture;
+  String? strClsOpenClass;
+  String? strNmTeacher;
+  String? strNmClassRoom;
+  int? nCredit;
+  String? strClsStatus;
+  String? strClsColor;
+  String? strTxtFree;
   DataLecture(
       this.nIdLecture,
       this.strNmLecture,
@@ -174,36 +174,37 @@ class DataLecture {
       this.strClsStatus,
       this.strClsColor,
       this.strTxtFree);
+  set IdLecture(int? value) {}
 }
 
 class DataSchedule {
-  final int? nSchoolYear;
-  final String? strClsSemester;
-  final String? strNmDay;
-  final int? nPeriod;
-  final int? nIdLecture;
+  int? nSchoolYear;
+  String? strClsSemester;
+  String? strNmDay;
+  int? nPeriod;
+  int? nIdLecture;
   DataSchedule(this.nSchoolYear, this.strClsSemester, this.strNmDay,
       this.nPeriod, this.nIdLecture);
 }
 
 class DataDiv {
-  final int nIdDivLecture;
-  final String strNmDivLecture;
+  int nIdDivLecture;
+  String strNmDivLecture;
   DataDiv(this.nIdDivLecture, this.strNmDivLecture);
 }
 
 class DataRel {
-  final int nIdDevLecture;
-  final int nIdLecture;
+  int nIdDevLecture;
+  int nIdLecture;
   DataRel(this.nIdDevLecture, this.nIdLecture);
 }
 
 class DataAttendance {
-  final int nIdLecture;
-  final int nAttendance;
-  final int nAbsence;
-  final int nBehind;
-  final int nOfficialAbsence;
+  int nIdLecture;
+  int nAttendance;
+  int nAbsence;
+  int nBehind;
+  int nOfficialAbsence;
   DataAttendance(this.nIdLecture, this.nAttendance, this.nAbsence, this.nBehind,
       this.nOfficialAbsence);
 }

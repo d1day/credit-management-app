@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
-import 'cls_insert.dart';
+import 'page_lecture_week.dart';
 import 'db_helper.dart';
 
 // デザイン
@@ -41,35 +41,25 @@ final int numPeriod = 6;
 final int numDay = 6;
 
 class TimeTable extends StatelessWidget {
-  TimeTable(
+  const TimeTable(
       {super.key, required this.nDeviceWidth, required this.nDeviceHeight});
   //
   final double nDeviceWidth;
   final double nDeviceHeight;
 
   //時間割取得
-  static Future<List<Map>> getTimeTable(
-      String strYear, String strClsSemestar) async {
-    int nYear = 0;
-    if (strYear != "null" && strClsSemestar != "null") {
-      nYear = int.parse(strYear);
-    }
-    DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map> result =
-        await dbHelper.selectTimeTableData(nYear, strClsSemestar);
-    return Future<List<Map>>.value(result);
-  }
-
-  static LectureInfo getLectureInfo(String strNmDay, int nPeriod, nIdLecture) {
-    var info = new LectureInfo();
-    for (int i = 0; i < tblTimeTable.length; i++) {
-      if (int.parse(tblTimeTable[i]['id_lecture']) == nIdLecture) {
-        info.id_lecture = int.parse(tblTimeTable[i]['id_lecture']);
-        info.nm_lecture = tblTimeTable[i]['nm_lecuture'].toString();
-        info.nm_class_room = tblTimeTable[i]['nm_class_room'].toString();
-      }
-    }
-    return info;
+  void getTimeTable(
+      String strYear, String strClsSemestar, BuildContext context) async {
+    tblTimeTable =
+        await UtilTimeTable.getTimeTable(strYear, strClsSemestar, context);
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     // 遷移先のクラス
+    //     builder: (BuildContext context) =>
+    //         TimeTable(nDeviceWidth: nDeviceWidth, nDeviceHeight: nDeviceHeight),
+    //   ),
+    // );
   }
 
   @override
@@ -106,9 +96,8 @@ class TimeTable extends StatelessWidget {
                   onSelect: (String? str) {
                     strYear = str;
                     if (strYear != null && strClsSemestar != null) {
-                      getTimeTable(
-                              strYear.toString(), strClsSemestar.toString())
-                          .then((value) => tblTimeTable = value);
+                      getTimeTable(strYear.toString(),
+                          strClsSemestar.toString(), context);
                     }
                   },
                 ),
@@ -122,9 +111,8 @@ class TimeTable extends StatelessWidget {
                   onSelect: (String? str) {
                     strClsSemestar = str;
                     if (strYear != null && strClsSemestar != null) {
-                      getTimeTable(
-                              strYear.toString(), strClsSemestar.toString())
-                          .then((value) => tblTimeTable = value);
+                      getTimeTable(strYear.toString(),
+                          strClsSemestar.toString(), context);
                     }
                   },
                 )
@@ -220,7 +208,7 @@ void _onBnbTap(int index) {}
 
 // 授業用のセル
 class TimeTableCell extends StatefulWidget {
-  TimeTableCell({
+  const TimeTableCell({
     super.key,
     required this.strNmDay,
     required this.nPeriod,
@@ -237,6 +225,7 @@ class _TimeTableCellState extends State<TimeTableCell> {
   String strIdLecture = '';
   String strNmLecture = '';
   String strNmClassRomm = '';
+  @override
   Widget build(BuildContext context) {
     for (int i = 0; i < tblTimeTable.length; i++) {
       if (tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
@@ -271,9 +260,21 @@ class _TimeTableCellState extends State<TimeTableCell> {
   }
 }
 
-class LectureInfo {
-  LectureInfo({this.id_lecture, this.nm_lecture, this.nm_class_room});
-  int? id_lecture;
-  String? nm_lecture;
-  String? nm_class_room;
+void selectLesson(BuildContext context, int nSchoolYear, String strClsSemester,
+    String strNmDay, int nPeriod, String strIdLesson) {
+  // 画面遷移時の処理
+  Navigator.of(context)
+      .push(
+    MaterialPageRoute(
+      builder: (context) => LectureWeek(
+        nSchoolYear: nSchoolYear,
+        strClsSemester: strClsSemester,
+        strNmDay: strNmDay,
+        nPeriod: nPeriod,
+      ),
+    ),
+  )
+      .then((value) {
+    UtilTimeTable.getTimeTable(nSchoolYear.toString(), strClsSemester, context);
+  });
 }
