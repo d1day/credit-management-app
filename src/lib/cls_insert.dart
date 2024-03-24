@@ -1,4 +1,4 @@
-import 'validators.dart';
+import 'validators.dart' show nameValidator;
 import 'db_helper.dart';
 import 'package:flutter/material.dart';
 import 'base_component.dart';
@@ -40,7 +40,8 @@ class _InsertPageState extends State<InsertPage> {
   final TextEditingController koushiController = TextEditingController();
   final TextEditingController kyoushituController = TextEditingController();
   String selectedUnit = '';
-  String colorUnit = lstCirclecolor.first.toString();
+  // String colorUnit = lstCirclecolor.first.toString();
+  int colorUnit = 0;
   final TextEditingController memoController = TextEditingController();
   static const key = GlobalObjectKey<FormState>('FORM_KEY');
 
@@ -105,20 +106,22 @@ class _InsertPageState extends State<InsertPage> {
             //  SizedBox(height: 16.0),
             Row(children: [
               Text('カラー'),
-              DropdownButton<String>(
+              DropdownButton<int>(
                 value: colorUnit,
-                onChanged: (String? value) {
+                onChanged: (int? value) {
                   setState(() {
                     colorUnit = value!;
                   });
                 },
-                items:
-                    lstCirclecolor.map<DropdownMenuItem<String>>((Color value) {
-                  return DropdownMenuItem<String>(
-                    value: value.toString(),
-                    child: Icon(
-                      Icons.circle,
-                      color: value,
+                items: lstCirclecolor.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  Color color = entry.value;
+                  return DropdownMenuItem<int>(
+                    value: index,
+                    child: Row(
+                      children: [
+                        Icon(Icons.circle, color: color),
+                      ],
                     ),
                   );
                 }).toList(),
@@ -174,7 +177,7 @@ class _InsertPageState extends State<InsertPage> {
         'ID_LECTURE': insertID,
       });
 
-      await databaseHelper.insertDIVLECTURE(insertID);
+      //await databaseHelper.insertDIVLECTURE(insertID);
 
       await databaseHelper.insertATTENDANCE(insertID);
 
