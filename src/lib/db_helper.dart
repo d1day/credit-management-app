@@ -54,12 +54,11 @@ class DatabaseHelper {
           )
         ''');
         await db.execute('''
-          CREATE TABLE M_DIV_LECTURE_REL(
+          CREATE TABLE M_DIV_LECTURE(
             ID_DIV_LECTURE INTEGER PRIMARY KEY,
-            ID_LECTURE INTEGER PRIMARY KEY,
-            FOREIGN KEY (ID_LECTURE) references M_CREDITS(ID_DIV_LECTURE, ID_LECTURE)
+            NM_DIV_LECTURE TEXT
           )
-        ''');
+          ''');
         await db.execute('''
           CREATE TABLE T_ATTENDANCE(
             ID_LECTURE INTEGER PRIMARY KEY,

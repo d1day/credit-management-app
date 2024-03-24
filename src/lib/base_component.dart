@@ -29,7 +29,7 @@ const lstDay = [
 const lstSemestar = ['前期', '後期'];
 
 //円の色
-const lstCirclecolor = <Color>[
+const List<Color> lstCirclecolor = [
   Color(0xFFF8BBD4),
   Color(0xFFEF9A9A),
   Color(0xFFFFAB91),
