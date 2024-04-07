@@ -70,6 +70,9 @@ abstract class PageLectureBase extends StatelessWidget {
   // 登録・更新
   void insOrUpd();
 
+  //各画面専用wigetをクリア
+  void clearIndividual();
+
   @override
   Widget build(BuildContext context) {
     const key = GlobalObjectKey<FormState>('FORM_KEY');

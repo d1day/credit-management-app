@@ -29,10 +29,17 @@ class LectureWeek extends PageLectureBase {
 
   @override
   Widget individualWidget() {
-    return const Row(children: [
-      Text('カラー'),
-      CmbColor(),
+    return Row(children: [
+      const Text('カラー'),
+      cmbColor,
     ]);
+  }
+
+  final cmbColor = const CmbColor();
+
+  @override
+  void clearIndividual() {
+    cmbColor.clear();
   }
 
   @override
@@ -58,6 +65,10 @@ class CmbColor extends StatefulWidget {
   const CmbColor({super.key});
   @override
   State<CmbColor> createState() => _CmbColorState();
+
+  void clear() {
+    createState();
+  }
 }
 
 class _CmbColorState extends State<CmbColor> {

@@ -135,7 +135,7 @@ class DatabaseHelper {
       int nYear, String strClsSemestar) async {
     final db = await initializeDatabase();
     List<Object> lst = [nYear, strClsSemestar];
-    final result = db.rawQuery('''
+    final Future<List<Map>> result = db.rawQuery('''
       SELECT
         s.NM_DAY,
         s.N_PERIOD,
@@ -150,7 +150,7 @@ class DatabaseHelper {
           s.N_SCHOOL_YEAR = ? and
           s.CLS_SEMESTER = ?
       ''', lst);
-    return Future<List<Map>>.value(result);
+    return result;
   }
 }
 

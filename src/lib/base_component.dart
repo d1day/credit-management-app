@@ -53,7 +53,7 @@ class CmbBase extends StatefulWidget {
   final List<String> list;
   final Color? color;
   final int firstIndex;
-  final Function(String?) onSelect;
+  final Function(String) onSelect;
   @override
   State<CmbBase> createState() => _CmbBaseState();
 }
@@ -99,19 +99,5 @@ class _CmbBaseState extends State<CmbBase> {
         );
       }).toList(),
     );
-  }
-}
-
-class UtilTimeTable {
-  static Future<List<Map>> getTimeTable(
-      String strYear, String strClsSemestar, BuildContext context) {
-    int nYear = 0;
-    if (strYear != "null" && strClsSemestar != "null") {
-      nYear = int.parse(strYear);
-    }
-    DatabaseHelper dbHelper = DatabaseHelper();
-    Future<List<Map>> result =
-        dbHelper.selectTimeTableData(nYear, strClsSemestar);
-    return result;
   }
 }
