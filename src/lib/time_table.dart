@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'base_component.dart';
-import 'cls_insert.dart';
+import 'page_lecture_week.dart';
 import 'db_helper.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 // デザイン
 // バーの色
@@ -29,49 +30,37 @@ const Color colorItem = Color.fromARGB(255, 169, 210, 243);
 // 表の文字の色
 const Color colorItemText = Colors.black;
 
-// 時間割リスト
-List<Map> tblTimeTable = List<Map>.empty(growable: true);
-
-String? strYear;
-String? strClsSemestar;
+String strYear = '';
+String strClsSemestar = '';
 
 // 時間数
 final int numPeriod = 6;
 // 曜日
 final int numDay = 6;
 
-class TimeTable extends StatelessWidget {
-  TimeTable(
-      {super.key, required this.nDeviceWidth, required this.nDeviceHeight});
+class TimeTable extends StatefulWidget {
+  const TimeTable({
+    super.key,
+  });
   //
-  final double nDeviceWidth;
-  final double nDeviceHeight;
+  static double nDeviceWidth = 0;
+  static double nDeviceHeight = 0;
 
   //時間割取得
   static Future<List<Map>> getTimeTable(
       String strYear, String strClsSemestar) async {
-    int nYear = 0;
-    if (strYear != "null" && strClsSemestar != "null") {
-      nYear = int.parse(strYear);
-    }
     DatabaseHelper dbHelper = DatabaseHelper();
-    List<Map> result =
-        await dbHelper.selectTimeTableData(nYear, strClsSemestar);
-    return Future<List<Map>>.value(result);
+    return dbHelper.selectTimeTableData(int.parse(strYear), strClsSemestar);
   }
 
-  static LectureInfo getLectureInfo(String strNmDay, int nPeriod, nIdLecture) {
-    var info = new LectureInfo();
-    for (int i = 0; i < tblTimeTable.length; i++) {
-      if (int.parse(tblTimeTable[i]['id_lecture']) == nIdLecture) {
-        info.id_lecture = int.parse(tblTimeTable[i]['id_lecture']);
-        info.nm_lecture = tblTimeTable[i]['nm_lecuture'].toString();
-        info.nm_class_room = tblTimeTable[i]['nm_class_room'].toString();
-      }
-    }
-    return info;
-  }
+  // 時間割リスト
+  static List<Map> tblTimeTable = List<Map>.empty(growable: true);
 
+  @override
+  createState() => _TimeTableState();
+}
+
+class _TimeTableState extends State<TimeTable> {
   @override
   Widget build(BuildContext context) {
     // 年度のリスト
@@ -81,81 +70,99 @@ class TimeTable extends StatelessWidget {
       lstYear.add((nYear + i).toString());
     }
 
+    //画面サイズから描画するサイズを決定
     final clrAppBarHeight = AppBar().preferredSize.height;
-    nWidthPeriod = nDeviceWidth / 14;
-    nHeightDay = nDeviceHeight / 20;
-    nWidthCell = (nDeviceWidth - nWidthPeriod - (nSideSpace * 2)) / numDay;
-    nHeightCell = (nDeviceHeight -
+    nWidthPeriod = TimeTable.nDeviceWidth / 14;
+    nHeightDay = TimeTable.nDeviceHeight / 20;
+    nWidthCell =
+        (TimeTable.nDeviceWidth - nWidthPeriod - (nSideSpace * 2)) / numDay;
+    nHeightCell = (TimeTable.nDeviceHeight -
                 clrAppBarHeight -
                 nHeightDay -
                 (nTopAndBottomSpace * 2) -
                 nBnbHeight) /
             numPeriod -
         5;
-    return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CmbBase(
-                  list: lstYear,
-                  color: colorBar,
-                  firstIndex: 10,
-                  onSelect: (String? str) {
-                    strYear = str;
-                    if (strYear != null && strClsSemestar != null) {
-                      getTimeTable(
-                              strYear.toString(), strClsSemestar.toString())
-                          .then((value) => tblTimeTable = value);
-                    }
-                  },
-                ),
-                const Text(
-                  '年度 ',
-                  style: TextStyle(fontSize: 19),
-                ),
-                CmbBase(
-                  list: lstSemestar,
-                  color: colorBar,
-                  onSelect: (String? str) {
-                    strClsSemestar = str;
-                    if (strYear != null && strClsSemestar != null) {
-                      getTimeTable(
-                              strYear.toString(), strClsSemestar.toString())
-                          .then((value) => tblTimeTable = value);
-                    }
-                  },
-                )
-              ]),
-          backgroundColor: colorBar,
+
+    // データ取得
+    return FutureBuilder(
+        future: TimeTable.getTimeTable(lstYear[10], lstSemestar[0]).then(
+          (value) => TimeTable.tblTimeTable = value,
         ),
-        drawer: Drawer(
-          child: ListView(children: const [ListTile(title: Text('メニュー１'))]),
-        ),
-        body: Padding(
-            padding: const EdgeInsets.fromLTRB(
-                nSideSpace, nTopAndBottomSpace, nSideSpace, nTopAndBottomSpace),
-            child: Column(
-              children: <Widget>[
-                for (int nRow = 0; nRow < numPeriod + 1; nRow++)
-                  Row(children: [
-                    for (int nCol = 0; nCol < numDay + 1; nCol++)
-                      createTimeTableCell(nRow, nCol),
-                  ])
-              ],
-            )),
-        bottomNavigationBar: SizedBox(
-            height: nBnbHeight,
-            child: BottomNavigationBar(items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.apps_rounded, color: Colors.white),
-                  label: '時間割'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.assessment_outlined, color: Colors.white),
-                  label: '単位管理'),
-            ], onTap: _onBnbTap, backgroundColor: colorItem)));
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return _loadingWidget(100);
+          } else {
+            return Scaffold(
+                appBar: AppBar(
+                  centerTitle: true,
+                  title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CmbBase(
+                          list: lstYear,
+                          color: colorBar,
+                          firstIndex: 10,
+                          onSelect: (String str) {
+                            strYear = str;
+                            TimeTable.getTimeTable(
+                                    strYear, strClsSemestar.toString())
+                                .then(
+                                    (value) => TimeTable.tblTimeTable = value);
+                          },
+                        ),
+                        const Text(
+                          '年度 ',
+                          style: TextStyle(fontSize: 19),
+                        ),
+                        CmbBase(
+                          list: lstSemestar,
+                          color: colorBar,
+                          onSelect: (String str) {
+                            strClsSemestar = str;
+                            TimeTable.getTimeTable(strYear.toString(),
+                                    strClsSemestar.toString())
+                                .then(
+                                    (value) => TimeTable.tblTimeTable = value);
+                          },
+                        )
+                      ]),
+                  backgroundColor: colorBar,
+                ),
+                drawer: Drawer(
+                  child: ListView(
+                      children: const [ListTile(title: Text('メニュー１'))]),
+                ),
+                body: Padding(
+                    padding: const EdgeInsets.fromLTRB(nSideSpace,
+                        nTopAndBottomSpace, nSideSpace, nTopAndBottomSpace),
+                    child: Column(
+                      children: <Widget>[
+                        for (int nRow = 0; nRow < numPeriod + 1; nRow++)
+                          Row(children: [
+                            for (int nCol = 0; nCol < numDay + 1; nCol++)
+                              createTimeTableCell(nRow, nCol),
+                          ])
+                      ],
+                    )),
+                bottomNavigationBar: SizedBox(
+                    height: nBnbHeight,
+                    child: BottomNavigationBar(
+                        items: const <BottomNavigationBarItem>[
+                          BottomNavigationBarItem(
+                              icon:
+                                  Icon(Icons.apps_rounded, color: Colors.white),
+                              label: '時間割'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.assessment_outlined,
+                                  color: Colors.white),
+                              label: '単位管理'),
+                        ],
+                        onTap: _onBnbTap,
+                        backgroundColor: colorItem)));
+          }
+        });
   }
 
   Widget createTimeTableCell(int nRow, int nCol) {
@@ -213,6 +220,15 @@ class TimeTable extends StatelessWidget {
           nPeriod: nRow);
     }
   }
+
+  Widget _loadingWidget(double size) {
+    return Center(
+      child: LoadingAnimationWidget.bouncingBall(
+        color: Colors.blue,
+        size: size,
+      ),
+    );
+  }
 }
 
 // ボトムバータップ
@@ -220,7 +236,7 @@ void _onBnbTap(int index) {}
 
 // 授業用のセル
 class TimeTableCell extends StatefulWidget {
-  TimeTableCell({
+  const TimeTableCell({
     super.key,
     required this.strNmDay,
     required this.nPeriod,
@@ -233,17 +249,23 @@ class TimeTableCell extends StatefulWidget {
 }
 
 class _TimeTableCellState extends State<TimeTableCell> {
+  String _strIdLecture = '';
+  String _strNmLecture = '';
+  String _strNmClassRomm = '';
+  Color? _color;
   @override
-  String strIdLecture = '';
-  String strNmLecture = '';
-  String strNmClassRomm = '';
   Widget build(BuildContext context) {
-    for (int i = 0; i < tblTimeTable.length; i++) {
-      if (tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
-          int.parse(tblTimeTable[i]['N_PERIOD'].toString()) == widget.nPeriod) {
-        strIdLecture = tblTimeTable[i]['ID_LECTURE'].toString();
-        strNmLecture = tblTimeTable[i]['NM_LECTURE'].toString();
-        strNmClassRomm = tblTimeTable[i]['NM_CLASS_ROOM'].toString();
+    for (int i = 0; i < TimeTable.tblTimeTable.length; i++) {
+      if (TimeTable.tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
+          int.parse(TimeTable.tblTimeTable[i]['N_PERIOD'].toString()) ==
+              widget.nPeriod) {
+        _strIdLecture = TimeTable.tblTimeTable[i]['ID_LECTURE'].toString();
+        _strNmLecture = TimeTable.tblTimeTable[i]['NM_LECTURE'].toString();
+        _strNmClassRomm = TimeTable.tblTimeTable[i]['NM_CLASS_ROOM'].toString();
+        if (TimeTable.tblTimeTable[i]['CLS_COLOR'] != null) {
+          _color =
+              lstCirclecolor[int.parse(TimeTable.tblTimeTable[i]['CLS_COLOR'])];
+        }
         break;
       }
     }
@@ -255,25 +277,34 @@ class _TimeTableCellState extends State<TimeTableCell> {
               strClsSemestar.toString(),
               widget.strNmDay,
               widget.nPeriod,
-              strIdLecture);
+              _strIdLecture);
         },
         child: Container(
             height: nHeightCell,
             width: nWidthCell,
             decoration: BoxDecoration(
-                border: Border.all(width: nWidth, color: colorItem)),
+                border: Border.all(width: nWidth, color: colorItem),
+                color: _color),
             child: Column(
               children: [
-                Text(strNmLecture),
-                Text(strNmClassRomm),
+                Text(_strNmLecture),
+                Text(_strNmClassRomm),
               ],
             )));
   }
 }
 
-class LectureInfo {
-  LectureInfo({this.id_lecture, this.nm_lecture, this.nm_class_room});
-  int? id_lecture;
-  String? nm_lecture;
-  String? nm_class_room;
+void selectLesson(BuildContext context, int nSchoolYear, String strClsSemester,
+    String strNmDay, int nPeriod, String strIdLesson) {
+  // 画面遷移時の処理
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => LectureWeek(
+        nSchoolYear: nSchoolYear,
+        strClsSemester: strClsSemester,
+        strNmDay: strNmDay,
+        nPeriod: nPeriod,
+      ),
+    ),
+  );
 }

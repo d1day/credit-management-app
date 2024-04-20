@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'db_helper.dart';
 
 // 定数
 // 日曜日
@@ -47,12 +48,12 @@ class CmbBase extends StatefulWidget {
       {super.key,
       this.firstIndex = 0,
       required this.list,
-      required this.color,
+      this.color,
       required this.onSelect});
   final List<String> list;
-  final Color color;
+  final Color? color;
   final int firstIndex;
-  final Function(String?) onSelect;
+  final Function(String) onSelect;
   @override
   State<CmbBase> createState() => _CmbBaseState();
 }

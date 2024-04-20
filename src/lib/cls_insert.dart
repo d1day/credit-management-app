@@ -160,26 +160,26 @@ class _InsertPageState extends State<InsertPage> {
     if (jugyou.isNotEmpty) {
       DatabaseHelper databaseHelper = DatabaseHelper();
 
-      int insertID = await databaseHelper.insertLectureData({
-        'NM_LECTURE': jugyou,
-        'NM_TEACHER': koushi,
-        'NM_CLASS_ROOM': kyoushitu,
-        'N_CREDIT': selectedUnit,
-        'CLS_COLOR': colorUnit,
-        'TXT_FREE': memo,
-      });
+      // int insertID = await databaseHelper.insertLectureData({
+      //   'NM_LECTURE': jugyou,
+      //   'NM_TEACHER': koushi,
+      //   'NM_CLASS_ROOM': kyoushitu,
+      //   'N_CREDIT': selectedUnit,
+      //   'CLS_COLOR': colorUnit,
+      //   'TXT_FREE': memo,
+      // });
 
-      await databaseHelper.insertSCHEDULEData({
-        'N_SCHOOL_YEAR': widget.nSchoolYear,
-        'CLS_SEMESTER': widget.strClsSemestar,
-        'NM_DAY': widget.strNmDay,
-        'N_PERIOD': widget.nPeriod,
-        'ID_LECTURE': insertID,
-      });
+      // await databaseHelper.insertSCHEDULEData({
+      //   'N_SCHOOL_YEAR': widget.nSchoolYear,
+      //   'CLS_SEMESTER': widget.strClsSemestar,
+      //   'NM_DAY': widget.strNmDay,
+      //   'N_PERIOD': widget.nPeriod,
+      //   'ID_LECTURE': insertID,
+      // });
 
       //await databaseHelper.insertDIVLECTURE(insertID);
 
-      await databaseHelper.insertATTENDANCE(insertID);
+      // await databaseHelper.insertATTENDANCE(insertID);
 
       print(
           'Data Inserted: $jugyou, $koushi, $kyoushitu, $selectedUnit,$colorUnit,$memo');
