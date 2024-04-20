@@ -39,7 +39,7 @@ class LectureWeek extends PageLectureBase {
 
   @override
   void clearIndividual() {
-    cmbColor.clear();
+    colorUnit = lstCirclecolor.first.toString();
   }
 
   @override
@@ -65,10 +65,6 @@ class CmbColor extends StatefulWidget {
   const CmbColor({super.key});
   @override
   State<CmbColor> createState() => _CmbColorState();
-
-  void clear() {
-    createState();
-  }
 }
 
 class _CmbColorState extends State<CmbColor> {

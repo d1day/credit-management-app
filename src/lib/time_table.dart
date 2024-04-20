@@ -39,11 +39,12 @@ final int numPeriod = 6;
 final int numDay = 6;
 
 class TimeTable extends StatefulWidget {
-  const TimeTable(
-      {super.key, required this.nDeviceWidth, required this.nDeviceHeight});
+  const TimeTable({
+    super.key,
+  });
   //
-  final double nDeviceWidth;
-  final double nDeviceHeight;
+  static double nDeviceWidth = 0;
+  static double nDeviceHeight = 0;
 
   //時間割取得
   static Future<List<Map>> getTimeTable(
@@ -71,11 +72,11 @@ class _TimeTableState extends State<TimeTable> {
 
     //画面サイズから描画するサイズを決定
     final clrAppBarHeight = AppBar().preferredSize.height;
-    nWidthPeriod = widget.nDeviceWidth / 14;
-    nHeightDay = widget.nDeviceHeight / 20;
+    nWidthPeriod = TimeTable.nDeviceWidth / 14;
+    nHeightDay = TimeTable.nDeviceHeight / 20;
     nWidthCell =
-        (widget.nDeviceWidth - nWidthPeriod - (nSideSpace * 2)) / numDay;
-    nHeightCell = (widget.nDeviceHeight -
+        (TimeTable.nDeviceWidth - nWidthPeriod - (nSideSpace * 2)) / numDay;
+    nHeightCell = (TimeTable.nDeviceHeight -
                 clrAppBarHeight -
                 nHeightDay -
                 (nTopAndBottomSpace * 2) -
@@ -248,19 +249,23 @@ class TimeTableCell extends StatefulWidget {
 }
 
 class _TimeTableCellState extends State<TimeTableCell> {
-  @override
-  String strIdLecture = '';
-  String strNmLecture = '';
-  String strNmClassRomm = '';
+  String _strIdLecture = '';
+  String _strNmLecture = '';
+  String _strNmClassRomm = '';
+  Color? _color;
   @override
   Widget build(BuildContext context) {
     for (int i = 0; i < TimeTable.tblTimeTable.length; i++) {
       if (TimeTable.tblTimeTable[i]['NM_DAY'].toString() == widget.strNmDay &&
           int.parse(TimeTable.tblTimeTable[i]['N_PERIOD'].toString()) ==
               widget.nPeriod) {
-        strIdLecture = TimeTable.tblTimeTable[i]['ID_LECTURE'].toString();
-        strNmLecture = TimeTable.tblTimeTable[i]['NM_LECTURE'].toString();
-        strNmClassRomm = TimeTable.tblTimeTable[i]['NM_CLASS_ROOM'].toString();
+        _strIdLecture = TimeTable.tblTimeTable[i]['ID_LECTURE'].toString();
+        _strNmLecture = TimeTable.tblTimeTable[i]['NM_LECTURE'].toString();
+        _strNmClassRomm = TimeTable.tblTimeTable[i]['NM_CLASS_ROOM'].toString();
+        if (TimeTable.tblTimeTable[i]['CLS_COLOR'] != null) {
+          _color =
+              lstCirclecolor[int.parse(TimeTable.tblTimeTable[i]['CLS_COLOR'])];
+        }
         break;
       }
     }
@@ -272,17 +277,18 @@ class _TimeTableCellState extends State<TimeTableCell> {
               strClsSemestar.toString(),
               widget.strNmDay,
               widget.nPeriod,
-              strIdLecture);
+              _strIdLecture);
         },
         child: Container(
             height: nHeightCell,
             width: nWidthCell,
             decoration: BoxDecoration(
-                border: Border.all(width: nWidth, color: colorItem)),
+                border: Border.all(width: nWidth, color: colorItem),
+                color: _color),
             child: Column(
               children: [
-                Text(strNmLecture),
-                Text(strNmClassRomm),
+                Text(_strNmLecture),
+                Text(_strNmClassRomm),
               ],
             )));
   }
