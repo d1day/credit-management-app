@@ -77,81 +77,83 @@ abstract class PageLectureBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const key = GlobalObjectKey<FormState>('FORM_KEY');
-    return PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) async {
-          _jugyouController.clear();
-          _koushiController.clear();
-          _kyoushituController.clear();
-          _memoController.clear();
-          clearIndividual();
-          Future.delayed(Duration.zero, () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const TimeTable()));
-          });
-        },
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            title: Text(strPageTitle),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: key,
-              child: Column(children: [
-                TextFormField(
-                  controller: _jugyouController,
-                  validator: nameValidator,
-                  decoration: const InputDecoration(
-                    labelText: '授業名',
-                  ),
+    return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: PopScope(
+            canPop: false,
+            onPopInvoked: (didPop) async {
+              _jugyouController.clear();
+              _koushiController.clear();
+              _kyoushituController.clear();
+              _memoController.clear();
+              clearIndividual();
+              Future.delayed(Duration.zero, () {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const TimeTable()));
+              });
+            },
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: AppBar(
+                title: Text(strPageTitle),
+              ),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: key,
+                  child: Column(children: [
+                    TextFormField(
+                      controller: _jugyouController,
+                      validator: nameValidator,
+                      decoration: const InputDecoration(
+                        labelText: '授業名',
+                      ),
+                    ),
+                    // SizedBox(height: 16.0),
+                    TextField(
+                      controller: _koushiController,
+                      decoration: const InputDecoration(
+                        labelText: '講師名',
+                      ),
+                    ),
+                    //  SizedBox(height: 16.0),
+                    TextField(
+                      controller: _kyoushituController,
+                      decoration: const InputDecoration(
+                        labelText: '教室',
+                      ),
+                    ),
+                    //  SizedBox(height: 16.0),
+                    Row(children: [
+                      const Text('単位数'),
+                      CmbBase(
+                        list: const <String>['', '1', '2', '3', '4'],
+                        onSelect: (String? str) {
+                          selectedUnit = str.toString();
+                        },
+                      ),
+                    ]),
+                    individualWidget(),
+                    //  SizedBox(height: 16.0),
+                    TextField(
+                      controller: _memoController,
+                      decoration: const InputDecoration(
+                          labelText: 'メモ', hintText: '\n\n\n\n'),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                    ),
+                    // SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (key.currentState!.validate()) {
+                          insOrUpd();
+                        }
+                      },
+                      child: const Text('登録'),
+                    ),
+                  ]),
                 ),
-                // SizedBox(height: 16.0),
-                TextField(
-                  controller: _koushiController,
-                  decoration: const InputDecoration(
-                    labelText: '講師名',
-                  ),
-                ),
-                //  SizedBox(height: 16.0),
-                TextField(
-                  controller: _kyoushituController,
-                  decoration: const InputDecoration(
-                    labelText: '教室',
-                  ),
-                ),
-                //  SizedBox(height: 16.0),
-                Row(children: [
-                  const Text('単位数'),
-                  CmbBase(
-                    list: const <String>['', '1', '2', '3', '4'],
-                    onSelect: (String? str) {
-                      selectedUnit = str.toString();
-                    },
-                  ),
-                ]),
-                individualWidget(),
-                //  SizedBox(height: 16.0),
-                TextField(
-                  controller: _memoController,
-                  decoration: const InputDecoration(
-                      labelText: 'メモ', hintText: '\n\n\n\n'),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                ),
-                // SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (key.currentState!.validate()) {
-                      insOrUpd();
-                    }
-                  },
-                  child: const Text('登録'),
-                ),
-              ]),
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 }

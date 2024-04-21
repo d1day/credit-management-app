@@ -20,7 +20,7 @@ class LectureWeek extends PageLectureBase {
       required this.nPeriod})
       : super(nBaseSchoolYear: nSchoolYear, strBaseClsSemestar: strClsSemester);
 
-  static String colorUnit = lstCirclecolor.first.toString();
+  static int colorUnit = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class LectureWeek extends PageLectureBase {
 
   @override
   void clearIndividual() {
-    colorUnit = lstCirclecolor.first.toString();
+    int colorUnit = 0;
   }
 
   @override
@@ -50,7 +50,7 @@ class LectureWeek extends PageLectureBase {
     String memo = super.strMemo;
     // 授業
     var lecture =
-        DataLecture(0, jugyou, '', koushi, kyoushitu, 0, '', '', memo);
+        DataLecture(0, jugyou, '', koushi, kyoushitu, 0, '', colorUnit, memo);
     DatabaseHelper db = DatabaseHelper();
     int nId = 0;
     await insertLecture(db, lecture).then((value) => nId = value);
@@ -69,20 +69,23 @@ class CmbColor extends StatefulWidget {
 
 class _CmbColorState extends State<CmbColor> {
   @override
-  build(context) {
-    return DropdownButton<String>(
+  Widget build(BuildContext context) {
+    return DropdownButton<int>(
       value: LectureWeek.colorUnit,
-      onChanged: (String? value) {
+      onChanged: (int? value) {
         setState(() {
           LectureWeek.colorUnit = value!;
         });
       },
-      items: lstCirclecolor.map<DropdownMenuItem<String>>((Color value) {
-        return DropdownMenuItem<String>(
-          value: value.toString(),
-          child: Icon(
-            Icons.circle,
-            color: value,
+      items: lstCirclecolor.asMap().entries.map((entry) {
+        int index = entry.key;
+        Color color = entry.value;
+        return DropdownMenuItem<int>(
+          value: index,
+          child: Row(
+            children: [
+              Icon(Icons.circle, color: color),
+            ],
           ),
         );
       }).toList(),

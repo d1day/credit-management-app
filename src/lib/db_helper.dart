@@ -31,7 +31,7 @@ class DatabaseHelper {
             NM_CLASS_ROOM TEXT,
             N_CREDIT INTEGER,
             CLS_STATUS TEXT,
-            CLS_COLOR TEXT,
+            CLS_COLOR INTEGER,
             TXT_FREE TEXT
           )
         ''');
@@ -89,7 +89,7 @@ class DatabaseHelper {
       'NM_CLASS_ROOM': data.strNmClassRoom,
       'N_CREDIT': data.nCredit,
       'CLS_STATUS': data.strClsStatus,
-      'CLS_COLOR': data.strClsColor,
+      'CLS_COLOR': data.nClsColor,
       'TXT_FREE': data.strTxtFree,
     });
     return int.parse(data.nIdLecture.toString());
@@ -141,7 +141,8 @@ class DatabaseHelper {
         s.N_PERIOD,
         s.ID_LECTURE,
         l.NM_LECTURE,
-        l.NM_CLASS_ROOM
+        l.NM_CLASS_ROOM,
+        l.CLS_COLOR
       FROM
         M_SCHEDULE s
         INNER JOIN M_LECTURE l ON
@@ -162,7 +163,7 @@ class DataLecture {
   String? strNmClassRoom;
   int? nCredit;
   String? strClsStatus;
-  String? strClsColor;
+  int? nClsColor;
   String? strTxtFree;
   DataLecture(
       this.nIdLecture,
@@ -172,7 +173,7 @@ class DataLecture {
       this.strNmClassRoom,
       this.nCredit,
       this.strClsStatus,
-      this.strClsColor,
+      this.nClsColor,
       this.strTxtFree);
   set IdLecture(int? value) {}
 }

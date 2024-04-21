@@ -263,8 +263,7 @@ class _TimeTableCellState extends State<TimeTableCell> {
         _strNmLecture = TimeTable.tblTimeTable[i]['NM_LECTURE'].toString();
         _strNmClassRomm = TimeTable.tblTimeTable[i]['NM_CLASS_ROOM'].toString();
         if (TimeTable.tblTimeTable[i]['CLS_COLOR'] != null) {
-          _color =
-              lstCirclecolor[int.parse(TimeTable.tblTimeTable[i]['CLS_COLOR'])];
+          _color = lstCirclecolor[TimeTable.tblTimeTable[i]['CLS_COLOR']];
         }
         break;
       }
