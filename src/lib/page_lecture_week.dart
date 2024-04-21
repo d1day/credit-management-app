@@ -39,7 +39,7 @@ class LectureWeek extends PageLectureBase {
 
   @override
   void clearIndividual() {
-    int colorUnit = 0;
+    colorUnit = 0;
   }
 
   @override
